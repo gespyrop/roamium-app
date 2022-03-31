@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:roamium_app/src/screens/authentication/registration_screen.dart';
 import 'package:roamium_app/src/screens/authentication/widgets/auth_form_fields.dart';
 import 'package:roamium_app/src/theme/colors.dart';
 import 'package:roamium_app/src/widgets/logo.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
   @override
   void dispose() {
     super.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
   }
 
-  _login() {
+  _register() {
     if (_key.currentState!.validate()) {
-      // TODO Add login logic
+      // TODO Add registration logic
     } else {
       setState(() => _autovalidateMode = AutovalidateMode.always);
     }
@@ -37,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     MediaQueryData mq = MediaQuery.of(context);
 
     return Scaffold(
+      // backgroundColor: secondaryColor,
       body: Container(
         height: double.infinity,
         decoration: BoxDecoration(
@@ -59,13 +65,33 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(
-                      top: mq.size.height *
-                          (mq.orientation == Orientation.portrait ? 0.1 : 0.07),
-                      bottom: mq.size.height *
-                          (mq.orientation == Orientation.portrait ? 0.3 : 0.07),
+                    padding: EdgeInsets.symmetric(
+                      vertical: mq.size.height *
+                          (mq.orientation == Orientation.portrait ? 0.1 : 0.05),
                     ),
                     child: const RoamiumLogo(),
+                  ),
+                  AuthTextFormField(
+                    label: 'First Name',
+                    controller: _firstNameController,
+                    keyboardType: TextInputType.name,
+                    validator: (firstName) {
+                      if (firstName == null || firstName.isEmpty) {
+                        return 'First name is required.';
+                      }
+                      return null;
+                    },
+                  ),
+                  AuthTextFormField(
+                    label: 'Last Name',
+                    controller: _lastNameController,
+                    keyboardType: TextInputType.name,
+                    validator: (lastName) {
+                      if (lastName == null || lastName.isEmpty) {
+                        return 'Last name is required.';
+                      }
+                      return null;
+                    },
                   ),
                   AuthTextFormField(
                     label: 'Email',
@@ -84,28 +110,43 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   AuthTextFormField(
-                    label: 'Password',
+                    label: 'Password', // TODO Translate
                     obscureText: true,
                     controller: _passwordController,
                     validator: (password) {
                       if (password == null || password.isEmpty) {
                         return 'Password is required.';
                       }
+
+                      if (password != _confirmPasswordController.text) {
+                        return 'The passwords don\'t match.';
+                      }
+
+                      return null;
+                    },
+                  ),
+                  AuthTextFormField(
+                    label: 'Confirm password', // TODO Translate
+                    obscureText: true,
+                    controller: _confirmPasswordController,
+                    validator: (password) {
+                      if (password == null || password.isEmpty) {
+                        return 'Password is required.';
+                      }
+
+                      if (password != _passwordController.text) {
+                        return 'The passwords don\'t match.';
+                      }
+
                       return null;
                     },
                   ),
                   const SizedBox(height: 12.0),
                   // TODO Translate
-                  AuthButton(text: 'LOG IN', onPressed: _login),
+                  AuthButton(text: 'SIGN UP', onPressed: _register),
                   AuthLink(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegistrationScreen(),
-                      ),
-                    ),
-                    // TODO Translate
-                    text: 'Don\'t have an account yet? Sign up.',
+                    onTap: () => Navigator.pop(context),
+                    text: 'Already have an account? Log in.', // TODO Translate
                   ),
                 ],
               ),
@@ -119,3 +160,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
 const String emailRegex =
     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+
+TextStyle errorStyle = TextStyle(
+    color: Colors.red, backgroundColor: Colors.white.withOpacity(0.7));
