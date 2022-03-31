@@ -6,13 +6,20 @@ class RoamiumLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      'Roamium',
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 32.0,
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: secondaryColor.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(32.0),
+      ),
+      child: const Text(
+        'Roamium',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 32.0,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

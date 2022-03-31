@@ -9,6 +9,7 @@ class Roamium extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Roamium',
+      debugShowCheckedModeBanner: false,
       theme: appThemeData,
       home: const LoginScreen(),
     );
