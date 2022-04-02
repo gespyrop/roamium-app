@@ -25,9 +25,9 @@ class AuthTextFormField extends StatelessWidget {
         style: const TextStyle(color: primaryColor),
         cursorColor: secondaryColor,
         decoration: InputDecoration(
-          labelStyle: const TextStyle(color: secondaryColor),
+          labelStyle: const TextStyle(color: secondaryColor, fontSize: 14.0),
           labelText: label,
-          hintStyle: const TextStyle(color: secondaryColor, fontSize: 16.0),
+          hintStyle: const TextStyle(color: secondaryColor, fontSize: 14.0),
           errorStyle: TextStyle(
             backgroundColor: Colors.white.withOpacity(0.7),
             color: Colors.red,

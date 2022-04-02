@@ -1,0 +1,21 @@
+{
+    "emailRequired": "Απαιτείται email",
+    "invalidEmail": "Εισάγετε μια έγκυρη διεύθυνση email",
+
+    "firstName": "Όνομα",
+    "firstNameRequired": "Απαιτείται όνομα.",
+
+    "lastName": "Επώνυμο",
+    "lastNameRequired": "Απαιτείται επώνυμο.",
+    
+    "password": "Κωδικός πρόσβασης",
+    "passwordRequired": "Απαιτείται κωδικός πρόσβασης.",
+    "confirmPassword": "Επιβεβαίωση κωδικού πρόσβασης",
+    "passwordsMismatch": "Οι κωδικοί πρόσβασης δεν ταιριάζουν.",
+
+    "login": "ΣΥΝΔΕΣΗ",
+    "loginLink": "Έχετε ήδη έναν λογαριασμό; Συνδεθείτε.",
+    
+    "signUp": "ΕΓΓΡΑΦΕΙΤΕ",
+    "signUpLink": "Δεν έχετε έναν λογαριασμό; Εγγραφείτε."
+}

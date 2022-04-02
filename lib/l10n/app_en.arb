@@ -1,0 +1,21 @@
+{
+    "emailRequired": "Email is required",
+    "invalidEmail": "Provide a valid email address",
+
+    "firstName": "First Name",
+    "firstNameRequired": "First name is required.",
+
+    "lastName": "Last Name",
+    "lastNameRequired": "Last name is required.",
+
+    "password": "Password",
+    "passwordRequired": "Password is required.",
+    "confirmPassword": "Confirm password",
+    "passwordsMismatch": "The passwords don't match.",
+
+    "login": "LOG IN",
+    "loginLink": "Already have an account? Log in.",
+    
+    "signUp": "SIGN UP",
+    "signUpLink": "Don't have an account yet? Sign up."
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:roamium_app/src/screens/authentication/registration_screen.dart';
 import 'package:roamium_app/src/screens/authentication/widgets/auth_form_fields.dart';
 import 'package:roamium_app/src/theme/colors.dart';
@@ -73,30 +74,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     keyboardType: TextInputType.emailAddress,
                     validator: (email) {
                       if (email == null || email.isEmpty) {
-                        return 'Email is required.'; // TODO Translate
+                        return AppLocalizations.of(context).emailRequired;
                       }
 
                       if (!RegExp(emailRegex).hasMatch(email)) {
-                        return 'Provide a valid email address.'; // TODO Translate
+                        return AppLocalizations.of(context).invalidEmail;
                       }
 
                       return null;
                     },
                   ),
                   AuthTextFormField(
-                    label: 'Password',
+                    label: AppLocalizations.of(context).password,
                     obscureText: true,
                     controller: _passwordController,
                     validator: (password) {
                       if (password == null || password.isEmpty) {
-                        return 'Password is required.';
+                        return AppLocalizations.of(context).passwordRequired;
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 12.0),
-                  // TODO Translate
-                  AuthButton(text: 'LOG IN', onPressed: _login),
+                  AuthButton(
+                    text: AppLocalizations.of(context).login,
+                    onPressed: _login,
+                  ),
                   AuthLink(
                     onTap: () => Navigator.push(
                       context,
@@ -104,8 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         builder: (context) => const RegistrationScreen(),
                       ),
                     ),
-                    // TODO Translate
-                    text: 'Don\'t have an account yet? Sign up.',
+                    text: AppLocalizations.of(context).signUpLink,
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:roamium_app/src/screens/authentication/widgets/auth_form_fields.dart';
 import 'package:roamium_app/src/theme/colors.dart';
 import 'package:roamium_app/src/widgets/logo.dart';
@@ -72,23 +73,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: const RoamiumLogo(),
                   ),
                   AuthTextFormField(
-                    label: 'First Name',
+                    label: AppLocalizations.of(context).firstName,
                     controller: _firstNameController,
                     keyboardType: TextInputType.name,
                     validator: (firstName) {
                       if (firstName == null || firstName.isEmpty) {
-                        return 'First name is required.';
+                        return AppLocalizations.of(context).firstNameRequired;
                       }
                       return null;
                     },
                   ),
                   AuthTextFormField(
-                    label: 'Last Name',
+                    label: AppLocalizations.of(context).lastName,
                     controller: _lastNameController,
                     keyboardType: TextInputType.name,
                     validator: (lastName) {
                       if (lastName == null || lastName.isEmpty) {
-                        return 'Last name is required.';
+                        return AppLocalizations.of(context).lastNameRequired;
                       }
                       return null;
                     },
@@ -99,54 +100,52 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     keyboardType: TextInputType.emailAddress,
                     validator: (email) {
                       if (email == null || email.isEmpty) {
-                        return 'Email is required.'; // TODO Translate
+                        return AppLocalizations.of(context).emailRequired;
                       }
 
                       if (!RegExp(emailRegex).hasMatch(email)) {
-                        return 'Provide a valid email address.'; // TODO Translate
+                        return AppLocalizations.of(context).invalidEmail;
                       }
 
                       return null;
                     },
                   ),
                   AuthTextFormField(
-                    label: 'Password', // TODO Translate
+                    label: AppLocalizations.of(context).password,
                     obscureText: true,
                     controller: _passwordController,
                     validator: (password) {
                       if (password == null || password.isEmpty) {
-                        return 'Password is required.';
-                      }
-
-                      if (password != _confirmPasswordController.text) {
-                        return 'The passwords don\'t match.';
+                        return AppLocalizations.of(context).passwordRequired;
                       }
 
                       return null;
                     },
                   ),
                   AuthTextFormField(
-                    label: 'Confirm password', // TODO Translate
+                    label: AppLocalizations.of(context).confirmPassword,
                     obscureText: true,
                     controller: _confirmPasswordController,
                     validator: (password) {
                       if (password == null || password.isEmpty) {
-                        return 'Password is required.';
+                        return AppLocalizations.of(context).passwordRequired;
                       }
 
                       if (password != _passwordController.text) {
-                        return 'The passwords don\'t match.';
+                        return AppLocalizations.of(context).passwordsMismatch;
                       }
 
                       return null;
                     },
                   ),
                   const SizedBox(height: 12.0),
-                  // TODO Translate
-                  AuthButton(text: 'SIGN UP', onPressed: _register),
+                  AuthButton(
+                    text: AppLocalizations.of(context).signUp,
+                    onPressed: _register,
+                  ),
                   AuthLink(
                     onTap: () => Navigator.pop(context),
-                    text: 'Already have an account? Log in.', // TODO Translate
+                    text: AppLocalizations.of(context).loginLink,
                   ),
                 ],
               ),
