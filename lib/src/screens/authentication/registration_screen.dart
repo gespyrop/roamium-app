@@ -43,7 +43,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     MediaQueryData mq = MediaQuery.of(context);
 
     return Scaffold(
-      // backgroundColor: secondaryColor,
       body: Container(
         height: double.infinity,
         decoration: BoxDecoration(

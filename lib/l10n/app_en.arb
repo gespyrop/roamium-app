@@ -17,5 +17,8 @@
     "loginLink": "Already have an account? Log in.",
     
     "signUp": "SIGN UP",
-    "signUpLink": "Don't have an account yet? Sign up."
+    "signUpLink": "Don't have an account yet? Sign up.",
+
+    "userNotFound": "User not found",
+    "noAccountWithGivenCredentials": "No account found with the given credentials. Wrong email or password."
 }
