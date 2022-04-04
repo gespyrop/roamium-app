@@ -20,5 +20,8 @@
     "signUpLink": "Don't have an account yet? Sign up.",
 
     "userNotFound": "User not found",
-    "noAccountWithGivenCredentials": "No account found with the given credentials. Wrong email or password."
+    "noAccountWithGivenCredentials": "No account found with the given credentials. Wrong email or password.",
+
+    "userRegisteredSuccessfully": "User registered successfully!",
+    "emailAlreadyInUse": "The provided email is already in use!"
 }

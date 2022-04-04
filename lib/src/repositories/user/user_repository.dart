@@ -6,7 +6,16 @@ import 'package:roamium_app/src/models/user.dart';
 part 'exceptions.dart';
 
 abstract class UserRepository {
+  /// Logs the user in using the provided [email] and [password].
   Future<User> login(String email, String password);
+
+  /// Registers a new user
+  Future<User> register(
+    String email,
+    String password, {
+    required String firstName,
+    required String lastName,
+  });
 }
 
 class DioUserRepository implements UserRepository {
@@ -34,7 +43,6 @@ class DioUserRepository implements UserRepository {
     }
   }
 
-  /// Logs the user in using the provided [email] and [password].
   @override
   Future<User> login(String email, String password) async {
     try {
@@ -63,6 +71,36 @@ class DioUserRepository implements UserRepository {
       }
 
       throw AuthenticationException(message: "noAccountWithGivenCredentials");
+    }
+  }
+
+  @override
+  Future<User> register(
+    String email,
+    String password, {
+    required String firstName,
+    required String lastName,
+  }) async {
+    try {
+      Response response = await client.post('/user/', data: {
+        'email': email,
+        'password': password,
+        'first_name': firstName,
+        'last_name': lastName,
+      });
+
+      return User.fromJSON(response.data);
+    } on DioError catch (e) {
+      if (e.response != null && e.response!.statusCode == 400) {
+        Map<String, dynamic> errorData =
+            e.response!.data as Map<String, dynamic>;
+
+        if (errorData.containsKey('email')) {
+          throw RegistrationException(message: 'emailAlreadyInUse');
+        }
+      }
+
+      throw RegistrationException();
     }
   }
 }
