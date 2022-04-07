@@ -10,6 +10,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserRepository userRepository;
 
   AuthBloc(this.userRepository) : super(AuthInitial()) {
+    on<CheckToken>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        User? user = await userRepository.loginFromStoredToken();
+        emit(user != null ? AuthLoaded(user) : AuthInitial());
+      } on AuthenticationException {
+        emit(AuthInitial());
+      }
+    });
+
     on<Login>((event, emit) async {
       emit(AuthLoading());
       try {
@@ -18,6 +28,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on AuthenticationException catch (e) {
         emit(AuthFailed(e.message));
       }
+    });
+
+    on<Logout>((event, emit) async {
+      emit(AuthLoading());
+      await userRepository.logout();
+      emit(AuthInitial());
     });
   }
 }

@@ -23,8 +23,17 @@ class Roamium extends StatelessWidget {
             // TODO Replace with the landing screen
             return Scaffold(
                 body: Center(
-              child: Text(
-                  'Logged in as ${state.user.firstName} ${state.user.lastName}'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(
+                      'Logged in as ${state.user.firstName} ${state.user.lastName}'),
+                  ElevatedButton(
+                    onPressed: () => context.read<AuthBloc>().add(Logout()),
+                    child: const Text("Logout"),
+                  )
+                ],
+              ),
             ));
           }
 

@@ -14,7 +14,8 @@ void main() => runApp(
           storage: const FlutterSecureStorage(),
         ),
         child: BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(context.read<UserRepository>()),
+          create: (context) =>
+              AuthBloc(context.read<UserRepository>())..add(CheckToken()),
           child: const Roamium(),
         ),
       ),
