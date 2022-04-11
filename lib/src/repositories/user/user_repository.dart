@@ -39,6 +39,7 @@ class DioUserRepository implements UserRepository {
             if (error.requestOptions.path == '/token/refresh/') {
               // Logout if it fails to refresh the token
               await logout();
+              throw AuthenticationException(message: error.message);
             } else {
               // Grab the stored refresh token and try to refresh it
               String? refreshToken = await storage.read(key: refreshTokenKey);
