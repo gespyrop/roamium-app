@@ -23,5 +23,11 @@
     "noAccountWithGivenCredentials": "Δεν βρέθηκε λογαριασμός με αυτά τα στοιχεία. Λανθασμένο email ή κωδικός πρόσβασης.",
 
     "userRegisteredSuccessfully": "Η εγγραφή ολοκληρώθηκε με επιτυχία!",
-    "emailAlreadyInUse": "Το email χρησιμοποιείται ήδη!"
+    "emailAlreadyInUse": "Το email χρησιμοποιείται ήδη!",
+
+    "planWalk": "Σχεδιάστε την βόλτα σας!",
+    "wheelchair": "Αναπηρικό αμαξίδιο",
+    "interests": "Ενδιαφέροντα",
+    "skip": "Παράλειψη",
+    "submit": "Υποβολή"
 }

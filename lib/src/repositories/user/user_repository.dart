@@ -47,9 +47,8 @@ class DioUserRepository implements UserRepository {
                 return handler.resolve(await _retry(error.requestOptions));
               }
             }
-
-            return handler.next(error);
           }
+          return handler.next(error);
         },
       ),
     );
