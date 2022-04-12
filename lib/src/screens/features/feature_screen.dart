@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:roamium_app/src/blocs/feature/feature_bloc.dart';
 import 'package:roamium_app/src/models/category.dart';
 import 'package:roamium_app/src/repositories/place/place_repository.dart';
 import 'package:roamium_app/src/screens/features/widgets/category_button.dart';
@@ -22,6 +24,25 @@ class _FeatureScreenState extends State<FeatureScreen> {
   bool wheelchair = false;
   List<Category> selectedCategories = [];
 
+  void _submitFeatures() {
+    context.read<FeatureBloc>().add(
+          SubmitFeatures(
+            widget.longitude,
+            widget.latitude,
+            categories: selectedCategories,
+            wheelchair: wheelchair,
+          ),
+        );
+
+    Navigator.of(context).pop();
+  }
+
+  void _skipFeatures() {
+    context.read<FeatureBloc>().add(SkipFeatures());
+
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,19 +53,19 @@ class _FeatureScreenState extends State<FeatureScreen> {
             const SizedBox(height: 24.0),
             const RoamiumLogo(),
             const SizedBox(height: 24.0),
-            const Text(
-              "Let's plan your walk!",
-              style: TextStyle(fontSize: 28.0, color: Colors.black54),
-            ), // TODO Translate
+            Text(
+              AppLocalizations.of(context).planWalk,
+              style: const TextStyle(fontSize: 28.0, color: Colors.black54),
+            ),
             const SizedBox(height: 24.0),
             ListTile(
-                title: const Text("Wheelchair"), // TODO Translate
+                title: Text(AppLocalizations.of(context).wheelchair),
                 trailing: Switch(
                   value: wheelchair,
                   onChanged: (value) => setState(() => wheelchair = value),
                 )),
             const Divider(),
-            const ListTile(title: Text("Interests")),
+            ListTile(title: Text(AppLocalizations.of(context).interests)),
             Expanded(
               child: FutureBuilder(
                 future: context.read<PlaceRepository>().getNearbyCategories(
@@ -63,16 +84,12 @@ class _FeatureScreenState extends State<FeatureScreen> {
                             .map(
                               (category) => CategoryButton(
                                 category: category,
-                                selected: selectedCategories.contains(category),
                                 onPressed: () {
+                                  // Not calling setState to avoid rebuilding
                                   if (selectedCategories.contains(category)) {
-                                    setState(() {
-                                      selectedCategories.remove(category);
-                                    });
+                                    selectedCategories.remove(category);
                                   } else {
-                                    setState(() {
-                                      selectedCategories.add(category);
-                                    });
+                                    selectedCategories.add(category);
                                   }
                                 },
                               ),
@@ -90,14 +107,14 @@ class _FeatureScreenState extends State<FeatureScreen> {
             ),
             ListTile(
               leading: InkWell(
-                onTap: Navigator.of(context).pop,
+                onTap: _skipFeatures,
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 12.0),
-                  child: const Text(
-                    'Cancel',
+                  child: Text(
+                    AppLocalizations.of(context).skip,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18.0,
                       decoration: TextDecoration.underline,
                       color: primaryColor,
@@ -107,15 +124,15 @@ class _FeatureScreenState extends State<FeatureScreen> {
                 ),
               ),
               trailing: ElevatedButton(
-                onPressed: () {},
+                onPressed: _submitFeatures,
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                 ),
-                child: const Text(
-                  "Submit",
-                  style: TextStyle(fontSize: 18.0),
+                child: Text(
+                  AppLocalizations.of(context).submit,
+                  style: const TextStyle(fontSize: 18.0),
                 ),
               ),
             )

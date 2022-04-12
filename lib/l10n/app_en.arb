@@ -23,5 +23,11 @@
     "noAccountWithGivenCredentials": "No account found with the given credentials. Wrong email or password.",
 
     "userRegisteredSuccessfully": "User registered successfully!",
-    "emailAlreadyInUse": "The provided email is already in use!"
+    "emailAlreadyInUse": "The provided email is already in use!",
+
+    "planWalk": "Let's plan your walk!",
+    "wheelchair": "Wheelchair",
+    "interests": "Interests",
+    "skip": "Skip",
+    "submit": "Submit"
 }

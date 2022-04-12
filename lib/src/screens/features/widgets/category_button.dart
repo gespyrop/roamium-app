@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:roamium_app/src/models/category.dart';
 import 'package:roamium_app/src/theme/colors.dart';
 
-class CategoryButton extends StatelessWidget {
+class CategoryButton extends StatefulWidget {
   final Category category;
-  final Function()? onPressed;
-  final bool selected;
+  final Function() onPressed;
 
   const CategoryButton(
-      {Key? key,
-      required this.category,
-      required this.onPressed,
-      this.selected = false})
+      {Key? key, required this.category, required this.onPressed})
       : super(key: key);
+
+  @override
+  State<CategoryButton> createState() => _CategoryButtonState();
+}
+
+class _CategoryButtonState extends State<CategoryButton> {
+  bool selected = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +29,12 @@ class CategoryButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(32.0),
             )),
-        onPressed: onPressed,
+        onPressed: () {
+          setState(() => selected = !selected);
+          widget.onPressed();
+        },
         child: Text(
-          category.toString(),
+          widget.category.toString(),
           textAlign: TextAlign.center,
           style: TextStyle(
             color: selected ? Colors.white : secondaryColor,

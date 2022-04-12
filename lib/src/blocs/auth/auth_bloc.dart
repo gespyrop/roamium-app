@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:roamium_app/src/models/user.dart';
 import 'package:roamium_app/src/repositories/user/user_repository.dart';
