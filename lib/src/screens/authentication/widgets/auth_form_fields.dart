@@ -54,7 +54,7 @@ class AuthTextFormField extends StatelessWidget {
 
 class AuthButton extends StatelessWidget {
   final String text;
-  final void Function()? onPressed;
+  final VoidCallback? onPressed;
 
   const AuthButton({Key? key, this.onPressed, this.text = ''})
       : super(key: key);
@@ -83,7 +83,7 @@ class AuthButton extends StatelessWidget {
 
 class AuthLink extends StatelessWidget {
   final String text;
-  final void Function()? onTap;
+  final VoidCallback? onTap;
 
   const AuthLink({Key? key, this.onTap, this.text = ''}) : super(key: key);
 

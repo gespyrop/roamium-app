@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:roamium_app/src/models/user.dart';
@@ -17,6 +18,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         User? user = await userRepository.loginFromStoredToken();
         emit(user != null ? AuthLoaded(user) : AuthInitial());
       } on AuthenticationException {
+        emit(AuthInitial());
+      } on DioError {
         emit(AuthInitial());
       }
     });

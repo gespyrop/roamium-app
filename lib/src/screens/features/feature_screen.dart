@@ -98,7 +98,7 @@ class _FeatureScreenState extends State<FeatureScreen> {
                       ),
                     );
                   } else if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.error.toString()));
+                    return const Center(child: Text('Something went wrong...'));
                   }
 
                   return const Center(child: CircularProgressIndicator());

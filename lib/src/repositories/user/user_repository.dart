@@ -43,8 +43,12 @@ class DioUserRepository implements UserRepository {
               // Grab the stored refresh token and try to refresh it
               String? refreshToken = await storage.read(key: refreshTokenKey);
               if (refreshToken != null) {
-                await _refreshToken(refreshToken);
-                return handler.resolve(await _retry(error.requestOptions));
+                try {
+                  await _refreshToken(refreshToken);
+                  return handler.resolve(await _retry(error.requestOptions));
+                } on DioError catch (e) {
+                  return handler.next(e);
+                }
               }
             }
           }

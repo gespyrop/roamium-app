@@ -25,9 +25,14 @@
     "userRegisteredSuccessfully": "User registered successfully!",
     "emailAlreadyInUse": "The provided email is already in use!",
 
+    "locationRequired": "Location is required! Please make sure that location services are enabled!",
+
     "planWalk": "Let's plan your walk!",
     "wheelchair": "Wheelchair",
     "interests": "Interests",
     "skip": "Skip",
-    "submit": "Submit"
+    "submit": "Submit",
+
+    "distance": "Distance",
+    "score": "Score"
 }
