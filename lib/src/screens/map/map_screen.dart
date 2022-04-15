@@ -31,6 +31,7 @@ class _MapScreenState extends State<MapScreen> {
 
   // Markers
   Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
+  Place? _selectedPlace;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.97945, 23.71622),
@@ -90,13 +91,29 @@ class _MapScreenState extends State<MapScreen> {
         snippet: place.summary,
         onTap: () => _launchPlaceDetailScreen(place),
       ),
-      onTap: () {
-        setState(() {
-          // Select the new marker
-          _markers[markerId] = _createMarker(place);
-        });
-      },
+      onTap: () => _selectPlace(place),
     );
+
+    return marker;
+  }
+
+  Marker _selectPlace(place) {
+    Marker marker = _createMarker(place);
+
+    if (_selectedPlace != place) {
+      setState(() {
+        // Select the new marker
+        _markers[marker.markerId] = marker;
+
+        // Deselect the previous marker
+        if (_selectedPlace != null) {
+          Marker previousMarker = _createMarker(_selectedPlace!, alpha: 0.1);
+          _markers[previousMarker.markerId] = previousMarker;
+        }
+
+        _selectedPlace = place;
+      });
+    }
 
     return marker;
   }
@@ -170,9 +187,7 @@ class _MapScreenState extends State<MapScreen> {
             // Horizontal card list
             PlaceCardList(
               onPlaceCardTap: (Place place) async {
-                // Select the new marker
-                Marker marker = _createMarker(place);
-                setState(() => _markers[marker.markerId] = marker);
+                Marker marker = _selectPlace(place);
 
                 // Focus on the marker and show the info window
                 _controller!.showMarkerInfoWindow(marker.markerId);
