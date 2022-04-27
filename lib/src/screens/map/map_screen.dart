@@ -9,7 +9,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:roamium_app/src/blocs/feature/feature_bloc.dart';
 import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/screens/features/feature_screen.dart';
-import 'package:roamium_app/src/screens/map/widgets/place_card_list.dart';
+import 'package:roamium_app/src/screens/map/widgets/places/place_card_list.dart';
+import 'package:roamium_app/src/screens/map/widgets/route/route_list.dart';
 import 'package:roamium_app/src/screens/places/place_detail_screen.dart';
 import 'package:roamium_app/src/theme/colors.dart';
 
@@ -22,6 +23,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _completer = Completer();
+  final GlobalKey<ScaffoldState> _key = GlobalKey();
   final Location _location = Location();
 
   // Map
@@ -121,15 +123,21 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _key,
       appBar: AppBar(
         title: const Text('Roamium'),
         actions: [
           IconButton(
             onPressed: _launchFeatureScreen,
             icon: const Icon(Icons.filter_alt),
+          ),
+          IconButton(
+            onPressed: _key.currentState?.openEndDrawer,
+            icon: const Icon(Icons.route_outlined),
           )
         ],
       ),
+      endDrawer: const Drawer(child: RouteList()),
       body: BlocListener<FeatureBloc, FeatureState>(
         listener: (context, state) {
           if (state is RecommendationsLoaded) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:roamium_app/src/blocs/feature/feature_bloc.dart';
 import 'package:roamium_app/src/models/place.dart';
-import 'package:roamium_app/src/screens/map/widgets/place_card.dart';
+import 'package:roamium_app/src/screens/map/widgets/places/place_card.dart';
 
 class PlaceCardList extends StatelessWidget {
   final void Function(Place)? onPlaceCardTap;

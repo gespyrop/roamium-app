@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:roamium_app/src/blocs/route/route_bloc.dart';
 import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/theme/colors.dart';
 
@@ -49,6 +51,40 @@ class PlaceDetailScreen extends StatelessWidget {
               AppLocalizations.of(context).wheelchair +
                   ': ${place.wheelchair ?? "-"}',
               style: const TextStyle(fontSize: 16.0),
+            ),
+            BlocBuilder<RouteBloc, RouteState>(
+              builder: (context, state) {
+                if (state is RoutePlanning) {
+                  return state.route.contains(place)
+                      ? ElevatedButton(
+                          onPressed: () {
+                            context
+                                .read<RouteBloc>()
+                                .add(RemovePlaceFromRoute(place));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.redAccent,
+                          ),
+                          child: Text(
+                              AppLocalizations.of(context).removeFromRoute),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            context
+                                .read<RouteBloc>()
+                                .add(AddPlaceToRoute(place));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: primaryColor,
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context).addToRoute,
+                          ),
+                        );
+                }
+
+                return const CircularProgressIndicator();
+              },
             )
           ],
         ),

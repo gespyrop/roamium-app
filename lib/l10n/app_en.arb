@@ -34,5 +34,8 @@
     "submit": "Submit",
 
     "distance": "Distance",
-    "score": "Score"
+    "score": "Score",
+
+    "addToRoute": "Add to route",
+    "removeFromRoute": "Remove from route"
 }
