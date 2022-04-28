@@ -24,5 +24,21 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
         emit(RoutePlanning(route: route));
       }
     });
+
+    on<ReorderPlace>((event, emit) {
+      if (state is RoutePlanning) {
+        List<Place> route = (state as RoutePlanning).route;
+        emit(RouteLoading());
+
+        // Get the new index
+        int newIndex = event.newIndex;
+        if (event.newIndex > event.oldIndex) newIndex--;
+
+        Place place = route.removeAt(event.oldIndex);
+        route.insert(newIndex, place);
+
+        emit(RoutePlanning(route: route));
+      }
+    });
   }
 }

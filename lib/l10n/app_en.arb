@@ -37,5 +37,6 @@
     "score": "Score",
 
     "addToRoute": "Add to route",
-    "removeFromRoute": "Remove from route"
+    "removeFromRoute": "Remove from route",
+    "myRoute": "My route"
 }

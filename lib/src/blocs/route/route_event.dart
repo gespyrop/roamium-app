@@ -18,3 +18,9 @@ class RemovePlaceFromRoute extends RouteEvent {
 
   const RemovePlaceFromRoute(this.place);
 }
+
+class ReorderPlace extends RouteEvent {
+  final int oldIndex, newIndex;
+
+  const ReorderPlace({required this.oldIndex, required this.newIndex});
+}

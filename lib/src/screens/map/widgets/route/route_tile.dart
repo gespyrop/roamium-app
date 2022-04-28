@@ -6,8 +6,13 @@ import 'package:roamium_app/src/screens/places/place_detail_screen.dart';
 
 class RouteTile extends StatelessWidget {
   final Place place;
+  final int index;
 
-  const RouteTile({Key? key, required this.place}) : super(key: key);
+  const RouteTile({
+    Key? key,
+    required this.place,
+    required this.index,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +24,10 @@ class RouteTile extends StatelessWidget {
             ),
           );
         },
+        leading: ReorderableDragStartListener(
+          index: index,
+          child: const Icon(Icons.drag_handle),
+        ),
         title: Text(place.name),
         // leading: const Icon(Icons.drag_handle),
         trailing: IconButton(
