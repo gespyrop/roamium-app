@@ -3,11 +3,15 @@ import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:roamium_app/src/blocs/feature/feature_bloc.dart';
+import 'package:roamium_app/src/blocs/route/route_bloc.dart';
+import 'package:roamium_app/src/models/directions.dart';
 import 'package:roamium_app/src/models/place.dart';
+import 'package:roamium_app/src/repositories/directions/directions_repository.dart';
 import 'package:roamium_app/src/screens/features/feature_screen.dart';
 import 'package:roamium_app/src/screens/map/widgets/places/place_card_list.dart';
 import 'package:roamium_app/src/screens/map/widgets/route/route_list.dart';
@@ -35,6 +39,9 @@ class _MapScreenState extends State<MapScreen> {
   Map<MarkerId, Marker> _markers = <MarkerId, Marker>{};
   Place? _selectedPlace;
 
+  // Polylines
+  Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
+
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.97945, 23.71622),
     zoom: 16,
@@ -48,6 +55,7 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  // Errors
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -57,6 +65,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  // Navigation
   void _launchFeatureScreen() async {
     if (location?.longitude != null && location?.latitude != null) {
       Navigator.of(context).push(
@@ -80,6 +89,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  // Markers
   Marker _createMarker(Place place, {double alpha = 1.0}) {
     MarkerId markerId = MarkerId(place.id.toString());
 
@@ -99,6 +109,53 @@ class _MapScreenState extends State<MapScreen> {
     return marker;
   }
 
+  void _addMarkers(List<Place> places, {double alpha = 0.1}) {
+    // Create new markers
+    Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+
+    for (Place place in places) {
+      Marker marker = _createMarker(place, alpha: alpha);
+      markers[marker.markerId] = marker;
+    }
+
+    // Unselect the selected place
+    if (_selectedPlace != null) {
+      Marker marker = _createMarker(_selectedPlace!);
+      _controller!.hideMarkerInfoWindow(marker.markerId);
+      setState(() => _selectedPlace = null);
+    }
+
+    // Set the new markers
+    setState(() => _markers = markers);
+  }
+
+  // Polylines
+  Polyline _createPolyline(List<PointLatLng> polylineCoordinates) {
+    List<LatLng> points = polylineCoordinates
+        .map((p) => LatLng(p.latitude, p.longitude))
+        .toList();
+
+    PolylineId polylineId = PolylineId(_polylines.length.toString());
+
+    return Polyline(
+      polylineId: polylineId,
+      color: primaryColor,
+      width: 4,
+      points: points,
+    );
+  }
+
+  // General map utils
+
+  /// Clears Markes and Polylines from the map
+  void _clearMapElements() {
+    setState(() {
+      _markers = {};
+      _polylines = {};
+    });
+  }
+
+  // Places
   Marker _selectPlace(place) {
     Marker marker = _createMarker(place);
 
@@ -108,7 +165,8 @@ class _MapScreenState extends State<MapScreen> {
         _markers[marker.markerId] = marker;
 
         // Deselect the previous marker
-        if (_selectedPlace != null) {
+        if (_selectedPlace != null &&
+            context.read<RouteBloc>().state is RoutePlanning) {
           Marker previousMarker = _createMarker(_selectedPlace!, alpha: 0.1);
           _markers[previousMarker.markerId] = previousMarker;
         }
@@ -141,92 +199,100 @@ class _MapScreenState extends State<MapScreen> {
       body: BlocListener<FeatureBloc, FeatureState>(
         listener: (context, state) {
           if (state is RecommendationsLoaded) {
-            // Clear previous markers
-            setState(() => _markers = {});
-
-            // Create new markers
-            Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-
-            for (Place place in state.places) {
-              Marker marker = _createMarker(place, alpha: 0.1);
-              markers[marker.markerId] = marker;
-            }
-
-            // Set the new markers
-            setState(() => _markers = markers);
+            _clearMapElements();
+            _addMarkers(state.places);
           } else if (state is RecommendationsFailed) {
             _showErrorSnackBar(state.message);
           }
         },
-        child: Stack(
-          children: [
-            // Map
-            if (_mapStyle != null)
-              GoogleMap(
-                initialCameraPosition: _kGooglePlex,
-                mapType: MapType.normal,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: true,
-                markers: Set<Marker>.of(_markers.values),
-                onMapCreated: (GoogleMapController controller) {
-                  controller.setMapStyle(_mapStyle);
-                  _completer.complete(controller);
-                  _controller = controller;
+        child: BlocListener<RouteBloc, RouteState>(
+          listener: (context, state) async {
+            if (state is RouteActive && location != null) {
+              // Add markers for route places
+              _clearMapElements();
+              _addMarkers(state.route, alpha: 1);
 
-                  _location.onLocationChanged.listen((l) {
-                    if (location == null) {
-                      location = l;
-                      controller.animateCamera(
-                        CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target: LatLng(l.latitude!, l.longitude!),
-                            zoom: 15,
+              Directions directions = await context
+                  .read<DirectionsRepository>()
+                  .getDirections(location: location!, route: state.route);
+
+              Polyline polyline =
+                  _createPolyline(directions.polylineCoordinates);
+
+              setState(() => _polylines[polyline.polylineId] = polyline);
+            }
+          },
+          child: Stack(
+            children: [
+              // Map
+              if (_mapStyle != null)
+                GoogleMap(
+                  initialCameraPosition: _kGooglePlex,
+                  mapType: MapType.normal,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  markers: Set<Marker>.of(_markers.values),
+                  polylines: Set<Polyline>.of(_polylines.values),
+                  onMapCreated: (GoogleMapController controller) {
+                    controller.setMapStyle(_mapStyle);
+                    _completer.complete(controller);
+                    _controller = controller;
+
+                    _location.onLocationChanged.listen((l) {
+                      if (location == null) {
+                        location = l;
+                        controller.animateCamera(
+                          CameraUpdate.newCameraPosition(
+                            CameraPosition(
+                              target: LatLng(l.latitude!, l.longitude!),
+                              zoom: 15,
+                            ),
                           ),
-                        ),
-                      );
-                      _launchFeatureScreen();
-                    } else {
-                      location = l;
-                    }
-                  });
+                        );
+                        _launchFeatureScreen();
+                      } else {
+                        location = l;
+                      }
+                    });
+                  },
+                ),
+
+              // Horizontal card list
+              PlaceCardList(
+                onPlaceCardTap: (Place place) async {
+                  Marker marker = _selectPlace(place);
+
+                  // Focus on the marker and show the info window
+                  _controller!.showMarkerInfoWindow(marker.markerId);
+
+                  _controller!.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: LatLng(place.latitude, place.longitude),
+                        zoom: 16,
+                      ),
+                    ),
+                  );
                 },
               ),
 
-            // Horizontal card list
-            PlaceCardList(
-              onPlaceCardTap: (Place place) async {
-                Marker marker = _selectPlace(place);
+              // Loading recommendations
+              BlocBuilder<FeatureBloc, FeatureState>(
+                builder: (context, state) {
+                  if (state is RecommendationsLoading) {
+                    return Container(
+                      color: primaryColor.withOpacity(0.3),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
 
-                // Focus on the marker and show the info window
-                _controller!.showMarkerInfoWindow(marker.markerId);
-
-                _controller!.animateCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(
-                      target: LatLng(place.latitude, place.longitude),
-                      zoom: 16,
-                    ),
-                  ),
-                );
-              },
-            ),
-
-            // Loading recommendations
-            BlocBuilder<FeatureBloc, FeatureState>(
-              builder: (context, state) {
-                if (state is RecommendationsLoading) {
-                  return Container(
-                    color: primaryColor.withOpacity(0.3),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-
-                return const SizedBox.shrink();
-              },
-            ),
-          ],
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -24,3 +24,9 @@ class ReorderPlace extends RouteEvent {
 
   const ReorderPlace({required this.oldIndex, required this.newIndex});
 }
+
+class StartRoute extends RouteEvent {
+  final List<Place> route;
+
+  const StartRoute(this.route);
+}

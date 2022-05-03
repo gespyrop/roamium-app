@@ -14,3 +14,12 @@ class RoutePlanning extends RouteState {
 
   const RoutePlanning({required this.route});
 }
+
+class RouteActive extends RouteState {
+  final List<Place> route;
+  final int index;
+
+  const RouteActive({required this.route, this.index = 0});
+
+  Place getPlace() => route[index];
+}

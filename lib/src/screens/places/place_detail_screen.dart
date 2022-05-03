@@ -81,6 +81,11 @@ class PlaceDetailScreen extends StatelessWidget {
                             AppLocalizations.of(context).addToRoute,
                           ),
                         );
+                } else if (state is RouteActive) {
+                  // TODO Complete visit?
+                  // if (place == state.getPlace())
+
+                  return const SizedBox.shrink();
                 }
 
                 return const CircularProgressIndicator();

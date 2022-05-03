@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:roamium_app/src/models/place.dart';
+import 'package:roamium_app/src/repositories/directions/directions_repository.dart';
 
 part 'route_event.dart';
 part 'route_state.dart';
@@ -40,5 +41,14 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
         emit(RoutePlanning(route: route));
       }
     });
+
+    on<StartRoute>(((event, emit) {
+      // TODO Remove debugging condition
+      if (state is RouteActive) {
+        emit(RoutePlanning(route: event.route));
+      } else {
+        emit(RouteActive(route: event.route));
+      }
+    }));
   }
 }

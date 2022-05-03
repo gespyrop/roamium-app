@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:roamium_app/config.dart';
 import 'package:roamium_app/src/app.dart';
+import 'package:roamium_app/src/repositories/directions/directions_repository.dart';
 
 import 'package:roamium_app/src/repositories/user/user_repository.dart';
 import 'package:roamium_app/src/repositories/place/place_repository.dart';
@@ -26,7 +27,10 @@ void main() => runApp(
           ),
           RepositoryProvider<PlaceRepository>(
             create: (context) => DioPlaceRepository(context.read<Dio>()),
-          )
+          ),
+          RepositoryProvider<DirectionsRepository>(
+            create: (context) => DioDirectionsRepository(context.read<Dio>()),
+          ),
         ],
         child: MultiBlocProvider(
           providers: [
