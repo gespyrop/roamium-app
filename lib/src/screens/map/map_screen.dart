@@ -14,6 +14,7 @@ import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/repositories/directions/directions_repository.dart';
 import 'package:roamium_app/src/screens/features/feature_screen.dart';
 import 'package:roamium_app/src/screens/map/widgets/places/place_card_list.dart';
+import 'package:roamium_app/src/screens/map/widgets/route/route_info_card.dart';
 import 'package:roamium_app/src/screens/map/widgets/route/route_list.dart';
 import 'package:roamium_app/src/screens/places/place_detail_screen.dart';
 import 'package:roamium_app/src/theme/colors.dart';
@@ -42,9 +43,12 @@ class _MapScreenState extends State<MapScreen> {
   // Polylines
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
 
+  // Directions
+  Directions? _directions;
+
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.97945, 23.71622),
-    zoom: 16,
+    zoom: 7,
   );
 
   @override
@@ -207,7 +211,10 @@ class _MapScreenState extends State<MapScreen> {
         },
         child: BlocListener<RouteBloc, RouteState>(
           listener: (context, state) async {
-            if (state is RouteActive && location != null) {
+            if (state is RouteActive && state.index == 0 && location != null) {
+              // Reset directions
+              setState(() => _directions = null);
+
               // Add markers for route places
               _clearMapElements();
               _addMarkers(state.route, alpha: 1);
@@ -219,7 +226,15 @@ class _MapScreenState extends State<MapScreen> {
               Polyline polyline =
                   _createPolyline(directions.polylineCoordinates);
 
-              setState(() => _polylines[polyline.polylineId] = polyline);
+              setState(() {
+                _polylines[polyline.polylineId] = polyline;
+                _directions = directions;
+              });
+            } else if (state is RouteFinished) {
+              _clearMapElements();
+              // TODO Open route summary page
+              context.read<RouteBloc>().add(ResetRoute());
+              context.read<FeatureBloc>().add(ResetFeatures());
             }
           },
           child: Stack(
@@ -257,23 +272,49 @@ class _MapScreenState extends State<MapScreen> {
                   },
                 ),
 
-              // Horizontal card list
-              PlaceCardList(
-                onPlaceCardTap: (Place place) async {
-                  Marker marker = _selectPlace(place);
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: SizedBox(
+                  height: 120.0,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0, left: 8.0),
+                    child: BlocBuilder<RouteBloc, RouteState>(
+                      builder: (context, state) {
+                        if (state is RoutePlanning) {
+                          // Horizontal card list
+                          return PlaceCardList(
+                            onPlaceCardTap: (Place place) async {
+                              Marker marker = _selectPlace(place);
 
-                  // Focus on the marker and show the info window
-                  _controller!.showMarkerInfoWindow(marker.markerId);
+                              // Focus on the marker and show the info window
+                              _controller!
+                                  .showMarkerInfoWindow(marker.markerId);
 
-                  _controller!.animateCamera(
-                    CameraUpdate.newCameraPosition(
-                      CameraPosition(
-                        target: LatLng(place.latitude, place.longitude),
-                        zoom: 16,
-                      ),
+                              _controller!.animateCamera(
+                                CameraUpdate.newCameraPosition(
+                                  CameraPosition(
+                                    target:
+                                        LatLng(place.latitude, place.longitude),
+                                    zoom: 16,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else if (state is RouteActive &&
+                            _directions != null) {
+                          // Route info summary
+                          return RouteInfoCard(
+                            directions: _directions!,
+                            place: state.getPlace(),
+                          );
+                        }
+
+                        return const SizedBox.shrink();
+                      },
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
 
               // Loading recommendations

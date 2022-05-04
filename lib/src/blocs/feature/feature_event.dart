@@ -22,4 +22,6 @@ class SubmitFeatures extends FeatureEvent {
 
 class SkipFeatures extends FeatureEvent {}
 
+class ResetFeatures extends FeatureEvent {}
+
 class ReloadRecommendations extends FeatureEvent {}

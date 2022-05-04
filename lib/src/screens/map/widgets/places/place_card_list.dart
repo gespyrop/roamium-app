@@ -14,31 +14,22 @@ class PlaceCardList extends StatelessWidget {
     return BlocBuilder<FeatureBloc, FeatureState>(
       builder: (context, state) {
         if (state is RecommendationsLoaded) {
-          return Align(
-            alignment: Alignment.bottomLeft,
-            child: SizedBox(
-              height: 120.0,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 16.0, left: 8.0),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: state.places.length,
-                  itemBuilder: (context, index) {
-                    Place place = state.places[index];
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: state.places.length,
+            itemBuilder: (context, index) {
+              Place place = state.places[index];
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: PlaceCard(
-                        place: place,
-                        onTap: onPlaceCardTap != null
-                            ? () => onPlaceCardTap!(place)
-                            : null,
-                      ),
-                    );
-                  },
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                child: PlaceCard(
+                  place: place,
+                  onTap: onPlaceCardTap != null
+                      ? () => onPlaceCardTap!(place)
+                      : null,
                 ),
-              ),
-            ),
+              );
+            },
           );
         }
 

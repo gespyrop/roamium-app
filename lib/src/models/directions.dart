@@ -4,6 +4,9 @@ class Directions {
   final List<PointLatLng> polylineCoordinates;
   final double distance, duration;
 
+  String get durationMinutes =>
+      (duration / 60).toStringAsFixed(2).replaceFirst('.', ':');
+
   Directions(this.polylineCoordinates, this.distance, this.duration);
 
   Directions.fromJSON(Map<String, dynamic> json)

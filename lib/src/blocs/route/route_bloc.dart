@@ -42,13 +42,30 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       }
     });
 
-    on<StartRoute>(((event, emit) {
+    on<StartRoute>((event, emit) {
       // TODO Remove debugging condition
       if (state is RouteActive) {
         emit(RoutePlanning(route: event.route));
       } else {
         emit(RouteActive(route: event.route));
       }
-    }));
+    });
+
+    on<ResetRoute>((event, emit) => emit(const RoutePlanning(route: [])));
+
+    on<MoveToNextPlace>((event, emit) {
+      if (state is RouteActive) {
+        RouteActive oldState = state as RouteActive;
+
+        emit(RouteLoading());
+
+        // If it is not the last place
+        if (oldState.index + 1 < oldState.route.length) {
+          emit(RouteActive(route: oldState.route, index: oldState.index + 1));
+        } else {
+          emit(RouteFinished(route: oldState.route));
+        }
+      }
+    });
   }
 }

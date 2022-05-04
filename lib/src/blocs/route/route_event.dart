@@ -30,3 +30,7 @@ class StartRoute extends RouteEvent {
 
   const StartRoute(this.route);
 }
+
+class ResetRoute extends RouteEvent {}
+
+class MoveToNextPlace extends RouteEvent {}

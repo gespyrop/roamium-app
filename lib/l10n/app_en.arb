@@ -34,9 +34,14 @@
     "submit": "Submit",
 
     "distance": "Distance",
+    "duration": "Duration",
     "score": "Score",
 
     "addToRoute": "Add to route",
     "removeFromRoute": "Remove from route",
-    "myRoute": "My route"
+    "myRoute": "My route",
+    "completeVisit": "Complete visit",
+
+    "next": "Next",
+    "minutes": "minutes"
 }

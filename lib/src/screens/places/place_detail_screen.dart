@@ -83,7 +83,19 @@ class PlaceDetailScreen extends StatelessWidget {
                         );
                 } else if (state is RouteActive) {
                   // TODO Complete visit?
-                  // if (place == state.getPlace())
+                  if (place == state.getPlace()) {
+                    return ElevatedButton(
+                      onPressed: () => context.read<RouteBloc>().add(
+                            MoveToNextPlace(),
+                          ),
+                      style: ElevatedButton.styleFrom(
+                        primary: primaryColor,
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context).addToRoute,
+                      ),
+                    );
+                  }
 
                   return const SizedBox.shrink();
                 }

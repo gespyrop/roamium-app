@@ -23,3 +23,9 @@ class RouteActive extends RouteState {
 
   Place getPlace() => route[index];
 }
+
+class RouteFinished extends RouteState {
+  final List<Place> route;
+
+  const RouteFinished({required this.route});
+}

@@ -33,6 +33,8 @@ class FeatureBloc extends Bloc<FeatureEvent, FeatureState> {
       emit(FeatureInitial());
     }));
 
+    on<ResetFeatures>((event, emit) => emit(FeatureInitial()));
+
     on<ReloadRecommendations>(((event, emit) async {
       if (state is RecommendationsLoaded) {
         List<Place> places = (state as RecommendationsLoaded).places;
