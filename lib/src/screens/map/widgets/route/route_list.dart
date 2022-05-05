@@ -56,7 +56,7 @@ class RouteList extends StatelessWidget {
                     itemCount: route.length,
                   ),
                 ),
-                if (state is RoutePlanning)
+                if (state is RoutePlanning && state.route.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(
@@ -70,7 +70,7 @@ class RouteList extends StatelessWidget {
                           Navigator.of(context).pop();
                         }),
                   )
-                else if (state is RouteActive)
+                else if (state is RouteActive && state.route.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(

@@ -13,6 +13,7 @@ import 'package:roamium_app/src/models/directions.dart';
 import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/repositories/directions/directions_repository.dart';
 import 'package:roamium_app/src/screens/features/feature_screen.dart';
+import 'package:roamium_app/src/screens/map/widgets/navigation/navigation_drawer.dart';
 import 'package:roamium_app/src/screens/map/widgets/places/place_card_list.dart';
 import 'package:roamium_app/src/screens/map/widgets/route/route_info_card.dart';
 import 'package:roamium_app/src/screens/map/widgets/route/route_list.dart';
@@ -60,6 +61,8 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // Errors
+
+  /// Shows an error snackbar with the given `message`.
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -70,6 +73,8 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // Navigation
+
+  /// Launches the feature screen.
   void _launchFeatureScreen() async {
     if (location?.longitude != null && location?.latitude != null) {
       Navigator.of(context).push(
@@ -87,6 +92,7 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+  /// Launches the `place`'s detail screen.
   void _launchPlaceDetailScreen(Place place) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => PlaceDetailScreen(place: place)),
@@ -94,6 +100,8 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // Markers
+
+  /// Creates a marker for the given `place`.
   Marker _createMarker(Place place, {double alpha = 1.0}) {
     MarkerId markerId = MarkerId(place.id.toString());
 
@@ -113,6 +121,7 @@ class _MapScreenState extends State<MapScreen> {
     return marker;
   }
 
+  /// Adds markers for a list of `places` on the map.
   void _addMarkers(List<Place> places, {double alpha = 0.1}) {
     // Create new markers
     Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
@@ -125,7 +134,11 @@ class _MapScreenState extends State<MapScreen> {
     // Unselect the selected place
     if (_selectedPlace != null) {
       Marker marker = _createMarker(_selectedPlace!);
-      _controller!.hideMarkerInfoWindow(marker.markerId);
+
+      if (_markers.containsKey(marker.markerId)) {
+        _controller!.hideMarkerInfoWindow(marker.markerId);
+      }
+
       setState(() => _selectedPlace = null);
     }
 
@@ -134,6 +147,9 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   // Polylines
+
+  /// Creates a Polyline to be drawn on the map
+  /// using a list of `polylineCoordinates`.
   Polyline _createPolyline(List<PointLatLng> polylineCoordinates) {
     List<LatLng> points = polylineCoordinates
         .map((p) => LatLng(p.latitude, p.longitude))
@@ -149,18 +165,10 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  // General map utils
-
-  /// Clears Markes and Polylines from the map
-  void _clearMapElements() {
-    setState(() {
-      _markers = {};
-      _polylines = {};
-    });
-  }
-
   // Places
-  Marker _selectPlace(place) {
+
+  /// Selects a `place`'s marker on the map.
+  Marker _selectPlace(Place place) {
     Marker marker = _createMarker(place);
 
     if (_selectedPlace != place) {
@@ -182,6 +190,33 @@ class _MapScreenState extends State<MapScreen> {
     return marker;
   }
 
+  /// Focuses on a `place` and shows the marker's info window.
+  void _focusPlace(Place place) {
+    Marker marker = _selectPlace(place);
+
+    _controller!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(place.latitude, place.longitude),
+          zoom: 16,
+        ),
+      ),
+    );
+
+    // Focus on the marker and show the info window
+    _controller!.showMarkerInfoWindow(marker.markerId);
+  }
+
+  // General map utils
+
+  /// Clears Markers and Polylines from the map
+  void _clearMapElements() {
+    setState(() {
+      _markers = {};
+      _polylines = {};
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,6 +234,7 @@ class _MapScreenState extends State<MapScreen> {
           )
         ],
       ),
+      drawer: const NavigationDrawer(),
       endDrawer: const Drawer(child: RouteList()),
       body: BlocListener<FeatureBloc, FeatureState>(
         listener: (context, state) {
@@ -211,25 +247,29 @@ class _MapScreenState extends State<MapScreen> {
         },
         child: BlocListener<RouteBloc, RouteState>(
           listener: (context, state) async {
-            if (state is RouteActive && state.index == 0 && location != null) {
-              // Reset directions
-              setState(() => _directions = null);
+            if (state is RouteActive && location != null) {
+              _focusPlace(state.getPlace());
 
-              // Add markers for route places
-              _clearMapElements();
-              _addMarkers(state.route, alpha: 1);
+              if (state.index == 0) {
+                // Reset directions
+                setState(() => _directions = null);
 
-              Directions directions = await context
-                  .read<DirectionsRepository>()
-                  .getDirections(location: location!, route: state.route);
+                // Add markers for route places
+                _clearMapElements();
+                _addMarkers(state.route, alpha: 1);
 
-              Polyline polyline =
-                  _createPolyline(directions.polylineCoordinates);
+                Directions directions = await context
+                    .read<DirectionsRepository>()
+                    .getDirections(location: location!, route: state.route);
 
-              setState(() {
-                _polylines[polyline.polylineId] = polyline;
-                _directions = directions;
-              });
+                Polyline polyline =
+                    _createPolyline(directions.polylineCoordinates);
+
+                setState(() {
+                  _polylines[polyline.polylineId] = polyline;
+                  _directions = directions;
+                });
+              }
             } else if (state is RouteFinished) {
               _clearMapElements();
               // TODO Open route summary page
@@ -283,23 +323,7 @@ class _MapScreenState extends State<MapScreen> {
                         if (state is RoutePlanning) {
                           // Horizontal card list
                           return PlaceCardList(
-                            onPlaceCardTap: (Place place) async {
-                              Marker marker = _selectPlace(place);
-
-                              // Focus on the marker and show the info window
-                              _controller!
-                                  .showMarkerInfoWindow(marker.markerId);
-
-                              _controller!.animateCamera(
-                                CameraUpdate.newCameraPosition(
-                                  CameraPosition(
-                                    target:
-                                        LatLng(place.latitude, place.longitude),
-                                    zoom: 16,
-                                  ),
-                                ),
-                              );
-                            },
+                            onPlaceCardTap: _focusPlace,
                           );
                         } else if (state is RouteActive &&
                             _directions != null) {

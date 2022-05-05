@@ -68,11 +68,17 @@ class PlaceCard extends StatelessWidget {
                             padding: EdgeInsets.zero,
                             iconSize: 18,
                             onPressed: () {
-                              context.read<RouteBloc>().add(
-                                    selected
-                                        ? RemovePlaceFromRoute(place)
-                                        : AddPlaceToRoute(place),
-                                  );
+                              if (selected) {
+                                context
+                                    .read<RouteBloc>()
+                                    .add(RemovePlaceFromRoute(place));
+                              } else {
+                                context
+                                    .read<RouteBloc>()
+                                    .add(AddPlaceToRoute(place));
+
+                                if (onTap != null) onTap!();
+                              }
                             },
                             color: primaryColor,
                             icon: Icon(
