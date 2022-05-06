@@ -43,5 +43,9 @@
     "completeVisit": "Complete visit",
 
     "next": "Next",
-    "minutes": "minutes"
+    "minutes": "minutes",
+
+    "myProfile": "My profile",
+    "routeHistory": "Route history",
+    "logout": "Logout"
 }
