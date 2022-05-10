@@ -4,14 +4,15 @@ class Place {
   final int id;
   final String name;
   final List<Category> categories;
+  final String source;
   final String? wheelchair;
   final double longitude, latitude, distance;
   final double? score;
 
   String get summary => 'Score: $score | Categories: ${categories.join(",")}';
 
-  Place(this.id, this.name, this.categories, this.wheelchair, this.longitude,
-      this.latitude, this.distance, this.score);
+  Place(this.id, this.name, this.categories, this.source, this.wheelchair,
+      this.longitude, this.latitude, this.distance, this.score);
 
   Place.fromJSON(Map<String, dynamic> json)
       : id = json['id'],
@@ -20,6 +21,7 @@ class Place {
           json['categories'].length,
           (index) => Category(json['categories'][index]),
         ),
+        source = json['source'],
         wheelchair = json['wheelchair'],
         longitude = json['location']['longitude'],
         latitude = json['location']['latitude'],

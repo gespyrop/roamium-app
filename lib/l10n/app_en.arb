@@ -42,6 +42,9 @@
     "myRoute": "My route",
     "completeVisit": "Complete visit",
 
+    "startRoute": "Start route",
+    "finishRoute": "Finish route",
+
     "next": "Next",
     "minutes": "minutes",
 

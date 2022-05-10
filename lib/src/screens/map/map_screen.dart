@@ -256,11 +256,12 @@ class _MapScreenState extends State<MapScreen> {
 
                 // Add markers for route places
                 _clearMapElements();
-                _addMarkers(state.route, alpha: 1);
+                _addMarkers(state.route.places, alpha: 1);
 
                 Directions directions = await context
                     .read<DirectionsRepository>()
-                    .getDirections(location: location!, route: state.route);
+                    .getDirections(
+                        location: location!, route: state.route.places);
 
                 Polyline polyline =
                     _createPolyline(directions.polylineCoordinates);

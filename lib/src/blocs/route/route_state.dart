@@ -16,16 +16,16 @@ class RoutePlanning extends RouteState {
 }
 
 class RouteActive extends RouteState {
-  final List<Place> route;
+  final Route route;
   final int index;
 
   const RouteActive({required this.route, this.index = 0});
 
-  Place getPlace() => route[index];
+  Place getPlace() => route.places[index];
 }
 
 class RouteFinished extends RouteState {
-  final List<Place> route;
+  final Route route;
 
   const RouteFinished({required this.route});
 }

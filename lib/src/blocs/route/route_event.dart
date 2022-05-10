@@ -26,9 +26,15 @@ class ReorderPlace extends RouteEvent {
 }
 
 class StartRoute extends RouteEvent {
-  final List<Place> route;
+  final List<Place> places;
 
-  const StartRoute(this.route);
+  const StartRoute(this.places);
+}
+
+class FinishRoute extends RouteEvent {
+  final Route route;
+
+  const FinishRoute(this.route);
 }
 
 class ResetRoute extends RouteEvent {}

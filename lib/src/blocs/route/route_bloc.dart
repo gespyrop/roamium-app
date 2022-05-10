@@ -1,13 +1,17 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:roamium_app/src/models/place.dart';
-import 'package:roamium_app/src/repositories/directions/directions_repository.dart';
+import 'package:roamium_app/src/models/route.dart';
+import 'package:roamium_app/src/models/visit.dart';
+import 'package:roamium_app/src/repositories/route/route_repository.dart';
 
 part 'route_event.dart';
 part 'route_state.dart';
 
 class RouteBloc extends Bloc<RouteEvent, RouteState> {
-  RouteBloc() : super(const RoutePlanning(route: [])) {
+  final RouteRepository routeRepository;
+
+  RouteBloc(this.routeRepository) : super(const RoutePlanning(route: [])) {
     on<AddPlaceToRoute>((event, emit) {
       if (state is RoutePlanning) {
         List<Place> route = List.from((state as RoutePlanning).route);
@@ -42,28 +46,42 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       }
     });
 
-    on<StartRoute>((event, emit) {
-      // TODO Remove debugging condition
-      if (state is RouteActive) {
-        emit(RoutePlanning(route: event.route));
-      } else {
-        emit(RouteActive(route: event.route));
-      }
+    on<StartRoute>((event, emit) async {
+      Route route = await routeRepository.createRoute(event.places);
+
+      emit(RouteActive(route: route));
+    });
+
+    on<FinishRoute>((event, emit) async {
+      Route route = await routeRepository.completeRoute(event.route);
+      emit(RouteFinished(route: route));
     });
 
     on<ResetRoute>((event, emit) => emit(const RoutePlanning(route: [])));
 
-    on<MoveToNextPlace>((event, emit) {
+    on<MoveToNextPlace>((event, emit) async {
       if (state is RouteActive) {
         RouteActive oldState = state as RouteActive;
 
         emit(RouteLoading());
 
-        // If it is not the last place
-        if (oldState.index + 1 < oldState.route.length) {
-          emit(RouteActive(route: oldState.route, index: oldState.index + 1));
+        // Create a visit
+        Visit visit = await routeRepository.visitPlace(
+          oldState.route,
+          oldState.getPlace(),
+        );
+
+        // Add the new visit to the route
+        List<Visit> visits = List.from(oldState.route.visits)..add(visit);
+        Route route = Route.copyWithVisits(oldState.route, visits);
+
+        // Move to the next place
+        if (oldState.index + 1 < oldState.route.places.length) {
+          // If it is not the last place the route is still active
+          emit(RouteActive(route: route, index: oldState.index + 1));
         } else {
-          emit(RouteFinished(route: oldState.route));
+          Route finishedRoute = await routeRepository.completeRoute(route);
+          emit(RouteFinished(route: finishedRoute));
         }
       }
     });

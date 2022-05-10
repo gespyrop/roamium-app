@@ -42,9 +42,18 @@ class RouteTile extends StatelessWidget {
             ),
           );
         },
-        leading: ReorderableDragStartListener(
-          index: index,
-          child: const Icon(Icons.drag_handle),
+        leading: BlocBuilder<RouteBloc, RouteState>(
+          builder: (context, state) {
+            return (state is RouteActive && state.route.isVisited(place))
+                ? const Icon(
+                    Icons.check,
+                    color: Colors.green,
+                  )
+                : ReorderableDragStartListener(
+                    index: index,
+                    child: const Icon(Icons.drag_handle),
+                  );
+          },
         ),
         title: Text(place.name),
       ),

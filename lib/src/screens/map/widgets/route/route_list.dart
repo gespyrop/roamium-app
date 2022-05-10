@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:roamium_app/src/blocs/feature/feature_bloc.dart';
 import 'package:roamium_app/src/blocs/route/route_bloc.dart';
 import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/screens/map/widgets/route/route_tile.dart';
@@ -18,7 +17,7 @@ class RouteList extends StatelessWidget {
         if (state is RoutePlanning) {
           route = state.route;
         } else if (state is RouteActive) {
-          route = state.route;
+          route = state.route.places;
         }
 
         if (route != null) {
@@ -60,29 +59,33 @@ class RouteList extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(
-                        child: const Text(
-                          "Start",
-                          style: TextStyle(fontSize: 18.0),
+                        child: Text(
+                          AppLocalizations.of(context).startRoute,
+                          style: const TextStyle(fontSize: 18.0),
                         ),
-                        // Start the route
                         onPressed: () {
+                          // Start the route
                           context.read<RouteBloc>().add(StartRoute(route!));
+
+                          // Close the drawer
                           Navigator.of(context).pop();
                         }),
                   )
-                else if (state is RouteActive && state.route.isNotEmpty)
+                else if (state is RouteActive && state.route.places.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ElevatedButton(
-                        child: const Text(
-                          "Stop",
-                          style: TextStyle(fontSize: 18.0),
+                        child: Text(
+                          AppLocalizations.of(context).finishRoute,
+                          style: const TextStyle(fontSize: 18.0),
                         ),
                         onPressed: () {
-                          context.read<RouteBloc>().add(StartRoute(route!));
+                          // Finish the route
                           context
-                              .read<FeatureBloc>()
-                              .add(ReloadRecommendations());
+                              .read<RouteBloc>()
+                              .add(FinishRoute(state.route));
+
+                          // Close the drawer
                           Navigator.of(context).pop();
                         }),
                   )
