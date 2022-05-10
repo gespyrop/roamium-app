@@ -9,10 +9,16 @@ abstract class RouteState extends Equatable {
 
 class RouteLoading extends RouteState {}
 
-class RoutePlanning extends RouteState {
-  final List<Place> route;
+class RouteFailure extends RouteState {
+  final Exception exception;
 
-  const RoutePlanning({required this.route});
+  const RouteFailure(this.exception);
+}
+
+class RoutePlanning extends RouteState {
+  final List<Place> places;
+
+  const RoutePlanning({required this.places});
 }
 
 class RouteActive extends RouteState {

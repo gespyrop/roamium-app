@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:roamium_app/src/blocs/route/route_bloc.dart';
 import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/screens/places/place_detail_screen.dart';
+import 'package:roamium_app/src/theme/colors.dart';
 
 class RouteTile extends StatelessWidget {
   final Place place;
@@ -44,15 +45,19 @@ class RouteTile extends StatelessWidget {
         },
         leading: BlocBuilder<RouteBloc, RouteState>(
           builder: (context, state) {
-            return (state is RouteActive && state.route.isVisited(place))
-                ? const Icon(
-                    Icons.check,
-                    color: Colors.green,
-                  )
-                : ReorderableDragStartListener(
-                    index: index,
-                    child: const Icon(Icons.drag_handle),
-                  );
+            if (state is RouteActive && state.route.isVisited(place)) {
+              return const Icon(
+                Icons.check,
+                color: Colors.green,
+              );
+            } else if (state is RoutePlanning) {
+              return ReorderableDragStartListener(
+                index: index,
+                child: const Icon(Icons.drag_handle),
+              );
+            }
+
+            return const Icon(Icons.place, color: primaryColor);
           },
         ),
         title: Text(place.name),

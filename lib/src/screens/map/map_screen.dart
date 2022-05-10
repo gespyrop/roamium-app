@@ -12,6 +12,7 @@ import 'package:roamium_app/src/blocs/route/route_bloc.dart';
 import 'package:roamium_app/src/models/directions.dart';
 import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/repositories/directions/directions_repository.dart';
+import 'package:roamium_app/src/repositories/route/route_repository.dart';
 import 'package:roamium_app/src/screens/features/feature_screen.dart';
 import 'package:roamium_app/src/screens/map/widgets/navigation/navigation_drawer.dart';
 import 'package:roamium_app/src/screens/map/widgets/places/place_card_list.dart';
@@ -276,6 +277,20 @@ class _MapScreenState extends State<MapScreen> {
               // TODO Open route summary page
               context.read<RouteBloc>().add(ResetRoute());
               context.read<FeatureBloc>().add(ResetFeatures());
+            } else if (state is RouteFailure) {
+              switch (state.exception.runtimeType) {
+                case RouteCreationException:
+                  _showErrorSnackBar(
+                      AppLocalizations.of(context).routeCreationError);
+                  break;
+                case VisitException:
+                  _showErrorSnackBar(AppLocalizations.of(context).visitError);
+                  break;
+                case RouteCompletionException:
+                  _showErrorSnackBar(
+                      AppLocalizations.of(context).routeCompletionError);
+                  {}
+              }
             }
           },
           child: Stack(

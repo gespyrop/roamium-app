@@ -55,7 +55,7 @@ class PlaceDetailScreen extends StatelessWidget {
             BlocBuilder<RouteBloc, RouteState>(
               builder: (context, state) {
                 if (state is RoutePlanning) {
-                  return state.route.contains(place)
+                  return state.places.contains(place)
                       ? ElevatedButton(
                           onPressed: () {
                             context

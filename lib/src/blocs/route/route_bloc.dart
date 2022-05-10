@@ -11,77 +11,104 @@ part 'route_state.dart';
 class RouteBloc extends Bloc<RouteEvent, RouteState> {
   final RouteRepository routeRepository;
 
-  RouteBloc(this.routeRepository) : super(const RoutePlanning(route: [])) {
+  RouteBloc(this.routeRepository) : super(const RoutePlanning(places: [])) {
     on<AddPlaceToRoute>((event, emit) {
       if (state is RoutePlanning) {
-        List<Place> route = List.from((state as RoutePlanning).route);
+        List<Place> places = List.from((state as RoutePlanning).places);
         emit(RouteLoading());
-        route.add(event.place);
-        emit(RoutePlanning(route: route));
+        places.add(event.place);
+        emit(RoutePlanning(places: places));
       }
     });
 
     on<RemovePlaceFromRoute>((event, emit) {
       if (state is RoutePlanning) {
-        List<Place> route = (state as RoutePlanning).route;
+        List<Place> places = (state as RoutePlanning).places;
         emit(RouteLoading());
-        route.remove(event.place);
-        emit(RoutePlanning(route: route));
+        places.remove(event.place);
+        emit(RoutePlanning(places: places));
       }
     });
 
     on<ReorderPlace>((event, emit) {
       if (state is RoutePlanning) {
-        List<Place> route = (state as RoutePlanning).route;
+        List<Place> places = (state as RoutePlanning).places;
         emit(RouteLoading());
 
         // Get the new index
         int newIndex = event.newIndex;
         if (event.newIndex > event.oldIndex) newIndex--;
 
-        Place place = route.removeAt(event.oldIndex);
-        route.insert(newIndex, place);
+        Place place = places.removeAt(event.oldIndex);
+        places.insert(newIndex, place);
 
-        emit(RoutePlanning(route: route));
+        emit(RoutePlanning(places: places));
       }
     });
 
     on<StartRoute>((event, emit) async {
-      Route route = await routeRepository.createRoute(event.places);
+      RouteState oldState = state;
+      emit(RouteLoading());
 
-      emit(RouteActive(route: route));
+      try {
+        Route route = await routeRepository.createRoute(event.places);
+
+        emit(RouteActive(route: route));
+      } on RouteCreationException catch (e) {
+        emit(RouteFailure(e));
+        Future.delayed(const Duration(milliseconds: 100));
+        emit(oldState);
+      }
     });
 
     on<FinishRoute>((event, emit) async {
-      Route route = await routeRepository.completeRoute(event.route);
-      emit(RouteFinished(route: route));
+      RouteState oldState = state;
+      emit(RouteLoading());
+
+      try {
+        Route route = await routeRepository.completeRoute(event.route);
+        emit(RouteFinished(route: route));
+      } on RouteCompletionException catch (e) {
+        emit(RouteFailure(e));
+        Future.delayed(const Duration(milliseconds: 100));
+        emit(oldState);
+      }
     });
 
-    on<ResetRoute>((event, emit) => emit(const RoutePlanning(route: [])));
+    on<ResetRoute>((event, emit) => emit(const RoutePlanning(places: [])));
 
     on<MoveToNextPlace>((event, emit) async {
       if (state is RouteActive) {
         RouteActive oldState = state as RouteActive;
-
         emit(RouteLoading());
 
-        // Create a visit
-        Visit visit = await routeRepository.visitPlace(
-          oldState.route,
-          oldState.getPlace(),
-        );
+        try {
+          // Create a visit
+          Visit visit = await routeRepository.visitPlace(
+            oldState.route,
+            oldState.getPlace(),
+          );
 
-        // Add the new visit to the route
-        List<Visit> visits = List.from(oldState.route.visits)..add(visit);
-        Route route = Route.copyWithVisits(oldState.route, visits);
+          // Add the new visit to the route
+          List<Visit> visits = List.from(oldState.route.visits)..add(visit);
+          Route route = Route.copyWithVisits(oldState.route, visits);
 
-        // Move to the next place
-        if (oldState.index + 1 < oldState.route.places.length) {
-          // If it is not the last place the route is still active
-          emit(RouteActive(route: route, index: oldState.index + 1));
-        } else {
-          Route finishedRoute = await routeRepository.completeRoute(route);
-          emit(RouteFinished(route: finishedRoute));
+          // Move to the next place
+          if (oldState.index + 1 < oldState.route.places.length) {
+            // If it is not the last place the route is still active
+            emit(RouteActive(route: route, index: oldState.index + 1));
+          } else {
+            Route finishedRoute = await routeRepository.completeRoute(route);
+            emit(RouteFinished(route: finishedRoute));
+          }
+        } on VisitException catch (e) {
+          emit(RouteFailure(e));
+          Future.delayed(const Duration(milliseconds: 100));
+          emit(oldState);
+        } on RouteCompletionException catch (e) {
+          emit(RouteFailure(e));
+          Future.delayed(const Duration(milliseconds: 100));
+          emit(oldState);
         }
       }
     });

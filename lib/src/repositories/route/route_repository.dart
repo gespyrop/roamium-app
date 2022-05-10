@@ -3,6 +3,8 @@ import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/models/route.dart';
 import 'package:roamium_app/src/models/visit.dart';
 
+part 'exceptions.dart';
+
 abstract class RouteRepository {
   /// Creates a new route.
   Future<Route> createRoute(List<Place> places);
@@ -23,10 +25,14 @@ class DioRouteRepository implements RouteRepository {
   Future<Route> createRoute(List<Place> places) async {
     String endpoint = '/route/routes/';
 
-    Response response = await client.post(endpoint);
-    int id = response.data['id'];
+    try {
+      Response response = await client.post(endpoint);
+      int id = response.data['id'];
 
-    return Route(id, places: places);
+      return Route(id, places: places);
+    } on DioError {
+      throw RouteCreationException();
+    }
   }
 
   @override
@@ -38,17 +44,25 @@ class DioRouteRepository implements RouteRepository {
     Map<String, dynamic> data = visit.toJson();
     data['route'] = route.id;
 
-    Response response = await client.post(endpoint, data: data);
+    try {
+      Response response = await client.post(endpoint, data: data);
 
-    return Visit.fromJson(response.data);
+      return Visit.fromJson(response.data);
+    } on DioError {
+      throw VisitException();
+    }
   }
 
   @override
   Future<Route> completeRoute(Route route) async {
     String endpoint = '/route/routes/${route.id}/complete/';
 
-    Response response = await client.post(endpoint);
+    try {
+      Response response = await client.post(endpoint);
 
-    return Route.fromJson(response.data);
+      return Route.fromJson(response.data);
+    } on DioError {
+      throw RouteCompletionException();
+    }
   }
 }

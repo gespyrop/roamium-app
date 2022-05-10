@@ -20,7 +20,7 @@ class PlaceCard extends StatelessWidget {
           builder: (context, state) {
             if (state is RoutePlanning) {
               // Check if the place has been selected for the current route
-              bool selected = state.route.contains(place);
+              bool selected = state.places.contains(place);
 
               return Card(
                 shape: RoundedRectangleBorder(
