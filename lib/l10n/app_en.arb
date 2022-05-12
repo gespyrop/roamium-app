@@ -54,5 +54,10 @@
 
     "routeCreationError": "Failed to create the route! Please try again.",
     "visitError": "Failed to visit the current place! Please try again",
-    "routeCompletionError": "Failed to complete the route! Please try again"
+    "routeCompletionError": "Failed to complete the route! Please try again",
+    "getRoutesError": "Failed to fetch routes! Please try again.",
+
+    "routeDetails": "Route details",
+    "routes": "Routes",
+    "visits": "Visits"
 }

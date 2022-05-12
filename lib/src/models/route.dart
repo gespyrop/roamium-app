@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/models/visit.dart';
 
@@ -5,6 +6,14 @@ class Route {
   final int id;
   final List<Place> places;
   final List<Visit> visits;
+
+  String getTimestampString({String locale = 'en'}) {
+    DateTime? lastTimestamp = visits.last.timestamp;
+
+    return lastTimestamp != null
+        ? DateFormat('EEEE dd-mm-yyyy H:m', locale).format(lastTimestamp)
+        : '';
+  }
 
   Route(
     this.id, {

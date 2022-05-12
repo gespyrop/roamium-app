@@ -14,6 +14,9 @@ abstract class RouteRepository {
 
   /// Completes a route.
   Future<Route> completeRoute(Route route);
+
+  /// Get the user's routes.
+  Future<List<Route>> getRoutes();
 }
 
 class DioRouteRepository implements RouteRepository {
@@ -64,5 +67,17 @@ class DioRouteRepository implements RouteRepository {
     } on DioError {
       throw RouteCompletionException();
     }
+  }
+
+  @override
+  Future<List<Route>> getRoutes() async {
+    String endpoint = '/route/routes';
+
+    Response response = await client.get(endpoint);
+    List<dynamic> data = response.data;
+
+    return List.generate(data.length, (index) => Route.fromJson(data[index]))
+        .reversed
+        .toList();
   }
 }

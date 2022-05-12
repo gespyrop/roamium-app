@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:roamium_app/src/models/place.dart';
 
 class Visit {
@@ -5,6 +6,12 @@ class Visit {
   final int placeId;
   final String placeSource, name;
   final DateTime? timestamp;
+
+  String getTimestampString({String locale = 'en'}) {
+    return timestamp != null
+        ? DateFormat('EEEE dd-mm-yyyy H:m', locale).format(timestamp!)
+        : '';
+  }
 
   Visit(
     this.placeId,

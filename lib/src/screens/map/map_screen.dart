@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Route;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,6 +11,7 @@ import 'package:roamium_app/src/blocs/feature/feature_bloc.dart';
 import 'package:roamium_app/src/blocs/route/route_bloc.dart';
 import 'package:roamium_app/src/models/directions.dart';
 import 'package:roamium_app/src/models/place.dart';
+import 'package:roamium_app/src/models/route.dart';
 import 'package:roamium_app/src/repositories/directions/directions_repository.dart';
 import 'package:roamium_app/src/repositories/route/route_repository.dart';
 import 'package:roamium_app/src/screens/features/feature_screen.dart';
@@ -19,6 +20,7 @@ import 'package:roamium_app/src/screens/map/widgets/places/place_card_list.dart'
 import 'package:roamium_app/src/screens/map/widgets/route/route_info_card.dart';
 import 'package:roamium_app/src/screens/map/widgets/route/route_list.dart';
 import 'package:roamium_app/src/screens/places/place_detail_screen.dart';
+import 'package:roamium_app/src/screens/route_history/route_details.dart';
 import 'package:roamium_app/src/theme/colors.dart';
 
 class MapScreen extends StatefulWidget {
@@ -97,6 +99,12 @@ class _MapScreenState extends State<MapScreen> {
   void _launchPlaceDetailScreen(Place place) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => PlaceDetailScreen(place: place)),
+    );
+  }
+
+  void _launchRouteDetailsScreen(Route route) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => RouteDetails(route: route)),
     );
   }
 
@@ -274,7 +282,7 @@ class _MapScreenState extends State<MapScreen> {
               }
             } else if (state is RouteFinished) {
               _clearMapElements();
-              // TODO Open route summary page
+              _launchRouteDetailsScreen(state.route);
               context.read<RouteBloc>().add(ResetRoute());
               context.read<FeatureBloc>().add(ResetFeatures());
             } else if (state is RouteFailure) {

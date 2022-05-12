@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:roamium_app/src/screens/authentication/login_screen.dart';
 import 'package:roamium_app/src/screens/map/map_screen.dart';
 import 'package:roamium_app/src/screens/profile/profile_screen.dart';
-import 'package:roamium_app/src/screens/route-history/route_history_screen.dart';
+import 'package:roamium_app/src/screens/route_history/route_history_screen.dart';
 import 'package:roamium_app/src/theme/style.dart';
 
 import 'blocs/auth/auth_bloc.dart';
