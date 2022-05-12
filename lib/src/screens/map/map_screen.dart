@@ -104,7 +104,7 @@ class _MapScreenState extends State<MapScreen> {
 
   void _launchRouteDetailsScreen(Route route) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => RouteDetails(route: route)),
+      MaterialPageRoute(builder: (context) => RouteDetailsScreen(route: route)),
     );
   }
 

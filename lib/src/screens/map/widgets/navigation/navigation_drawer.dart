@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:roamium_app/src/blocs/auth/auth_bloc.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:roamium_app/src/theme/colors.dart';
+import 'package:roamium_app/src/widgets/logo.dart';
 
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
@@ -17,14 +19,28 @@ class NavigationDrawer extends StatelessWidget {
               child: ListView(
                 children: [
                   // Navigation menu
+                  const Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 8.0, horizontal: 48.0),
+                    child: RoamiumLogo(),
+                  ),
+                  const Divider(),
                   ListTile(
-                    title: Text(AppLocalizations.of(context).myProfile),
-                    leading: const Icon(Icons.person),
+                    title: Text(
+                      AppLocalizations.of(context).myProfile,
+                      style: const TextStyle(color: Colors.black54),
+                    ),
+                    leading: Icon(Icons.person,
+                        color: primaryColor.withOpacity(0.8)),
                     onTap: () => Navigator.of(context).pushNamed('/profile'),
                   ),
                   ListTile(
-                    title: Text(AppLocalizations.of(context).routeHistory),
-                    leading: const Icon(Icons.history),
+                    title: Text(
+                      AppLocalizations.of(context).routeHistory,
+                      style: const TextStyle(color: Colors.black54),
+                    ),
+                    leading: Icon(Icons.history,
+                        color: primaryColor.withOpacity(0.8)),
                     onTap: () =>
                         Navigator.of(context).pushNamed('/route-history'),
                   ),
@@ -34,8 +50,11 @@ class NavigationDrawer extends StatelessWidget {
 
             // Logout
             ListTile(
-              title: Text(AppLocalizations.of(context).logout),
-              leading: const Icon(Icons.logout),
+              title: Text(
+                AppLocalizations.of(context).logout,
+                style: const TextStyle(color: Colors.black54),
+              ),
+              leading: Icon(Icons.logout, color: primaryColor.withOpacity(0.8)),
               onTap: () => context.read<AuthBloc>().add(Logout()),
             ),
           ],

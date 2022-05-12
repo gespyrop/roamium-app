@@ -59,5 +59,8 @@
 
     "routeDetails": "Route details",
     "routes": "Routes",
-    "visits": "Visits"
+    "visits": "Visits",
+    "youVisited": "You visited",
+    "on" : "on ",
+    "onSat": "on "
 }

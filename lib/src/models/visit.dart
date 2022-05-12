@@ -9,7 +9,7 @@ class Visit {
 
   String getTimestampString({String locale = 'en'}) {
     return timestamp != null
-        ? DateFormat('EEEE dd-mm-yyyy H:m', locale).format(timestamp!)
+        ? DateFormat('EEEE dd-MM-yyyy H:m', locale).format(timestamp!)
         : '';
   }
 

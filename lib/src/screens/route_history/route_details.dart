@@ -5,10 +5,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:roamium_app/src/screens/route_history/widgets/list_header.dart';
 import 'package:roamium_app/src/screens/route_history/widgets/visits/visit_list.dart';
 
-class RouteDetails extends StatelessWidget {
+class RouteDetailsScreen extends StatelessWidget {
   final Route route;
 
-  const RouteDetails({Key? key, required this.route}) : super(key: key);
+  const RouteDetailsScreen({Key? key, required this.route}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

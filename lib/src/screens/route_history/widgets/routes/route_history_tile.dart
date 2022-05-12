@@ -24,7 +24,8 @@ class RouteHistoryTile extends StatelessWidget {
         ),
         onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => RouteDetails(route: route)),
+          MaterialPageRoute(
+              builder: (context) => RouteDetailsScreen(route: route)),
         ),
       ),
     );

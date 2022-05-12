@@ -8,10 +8,10 @@ class Route {
   final List<Visit> visits;
 
   String getTimestampString({String locale = 'en'}) {
-    DateTime? lastTimestamp = visits.last.timestamp;
+    DateTime? lastTimestamp = visits.isNotEmpty ? visits.last.timestamp : null;
 
     return lastTimestamp != null
-        ? DateFormat('EEEE dd-mm-yyyy H:m', locale).format(lastTimestamp)
+        ? DateFormat('EEEE dd-MM-yyyy H:m', locale).format(lastTimestamp)
         : '';
   }
 
