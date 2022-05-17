@@ -68,6 +68,7 @@
 
     "zeroStarsError": "Please enter a rating for your visit ranging from 1 to 5.",
     "reviewCreationError": "Failed to submit review. Please try again!",
-    "reviewUpdateError": "Failed to update review. Please try again!"
+    "reviewUpdateError": "Failed to update review. Please try again!",
 
+    "reviews": "Reviews"
 }

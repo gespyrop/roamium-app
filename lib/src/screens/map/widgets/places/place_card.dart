@@ -41,9 +41,22 @@ class PlaceCard extends StatelessWidget {
                       maxLines: 2,
                       textAlign: TextAlign.center,
                     ),
-                    Text(
-                      'Score: ${place.score?.toStringAsFixed(6)}',
-                      style: const TextStyle(fontSize: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          'Score: ${place.score?.toStringAsFixed(6)}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        if (place.rating != null)
+                          Text(
+                            '${place.rating} ★',
+                            style: const TextStyle(
+                              color: primaryColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
