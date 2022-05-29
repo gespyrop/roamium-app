@@ -5,10 +5,14 @@ import 'package:roamium_app/src/theme/colors.dart';
 class CategoryButton extends StatefulWidget {
   final Category category;
   final Function() onPressed;
+  final bool selected;
 
-  const CategoryButton(
-      {Key? key, required this.category, required this.onPressed})
-      : super(key: key);
+  const CategoryButton({
+    Key? key,
+    required this.category,
+    required this.onPressed,
+    this.selected = false,
+  }) : super(key: key);
 
   @override
   State<CategoryButton> createState() => _CategoryButtonState();
@@ -16,6 +20,12 @@ class CategoryButton extends StatefulWidget {
 
 class _CategoryButtonState extends State<CategoryButton> {
   bool selected = false;
+
+  @override
+  void initState() {
+    selected = widget.selected;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
