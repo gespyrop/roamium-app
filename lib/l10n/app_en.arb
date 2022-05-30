@@ -27,13 +27,18 @@
 
     "locationRequired": "Location is required! Please make sure that location services are enabled!",
 
-    "planWalk": "Let's plan your walk!",
-    "wheelchair": "Wheelchair",
+    "planWalk": "Let's plan your trip!",
     "interests": "Interests",
     "searchInterests": "Search for interests",
     "somethingWentWrong": "Something went wrong...",
     "skip": "Skip",
     "submit": "Submit",
+
+    "walking": "Walking",
+    "hiking": "Hiking",
+    "bike": "Bike",
+    "car": "Car",
+    "wheelchair": "Wheelchair",
 
     "distance": "Distance",
     "duration": "Duration",

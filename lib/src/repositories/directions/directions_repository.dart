@@ -3,11 +3,21 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:location/location.dart';
 import 'package:roamium_app/src/models/directions.dart';
 import 'package:roamium_app/src/models/place.dart';
+import 'package:roamium_app/src/models/route.dart';
+
+Map<RouteType, String> routeTypeMap = {
+  RouteType.walking: 'foot-walking',
+  RouteType.hiking: 'foot-hiking',
+  RouteType.car: 'driving-car',
+  RouteType.bike: 'cycling-regular',
+  RouteType.wheelchair: 'wheelchair',
+};
 
 abstract class DirectionsRepository {
   Future<Directions> getDirections({
     required LocationData location,
     required List<Place> route,
+    RouteType routeType,
   });
 }
 
@@ -20,8 +30,9 @@ class ORSDirectionsRepository implements DirectionsRepository {
   Future<Directions> getDirections({
     required LocationData location,
     required List<Place> route,
+    RouteType routeType = RouteType.walking,
   }) async {
-    const String url = '/directions/foot-walking';
+    String url = '/directions/${routeTypeMap[routeType]}';
 
     // API key from https://openrouteservice.org/
     const String apiKey = 'ORS_API_KEY';
@@ -69,8 +80,11 @@ class DioDirectionsRepository implements DirectionsRepository {
   DioDirectionsRepository(this.client);
 
   @override
-  Future<Directions> getDirections(
-      {required LocationData location, required List<Place> route}) async {
+  Future<Directions> getDirections({
+    required LocationData location,
+    required List<Place> route,
+    RouteType routeType = RouteType.walking,
+  }) async {
     String url = '/place/places/directions/';
 
     // Prepare points
@@ -82,7 +96,10 @@ class DioDirectionsRepository implements DirectionsRepository {
       points.add([place.longitude, place.latitude]);
     }
 
-    Response response = await client.post(url, data: {'points': points});
+    Response response = await client.post(url, data: {
+      'points': points,
+      'profile': routeTypeMap[routeType],
+    });
 
     return Directions.fromJSON(response.data);
   }

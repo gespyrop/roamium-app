@@ -2,10 +2,19 @@ import 'package:intl/intl.dart';
 import 'package:roamium_app/src/models/place.dart';
 import 'package:roamium_app/src/models/visit.dart';
 
+enum RouteType {
+  walking,
+  hiking,
+  car,
+  bike,
+  wheelchair,
+}
+
 class Route {
   final int id;
   final List<Place> places;
   final List<Visit> visits;
+  final RouteType type;
 
   String getTimestampString({String locale = 'en'}) {
     DateTime? lastTimestamp = visits.isNotEmpty ? visits.last.timestamp : null;
@@ -15,15 +24,15 @@ class Route {
         : '';
   }
 
-  Route(
-    this.id, {
-    this.places = const [],
-    this.visits = const [],
-  });
+  Route(this.id,
+      {this.places = const [],
+      this.visits = const [],
+      this.type = RouteType.walking});
 
   Route.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         places = [],
+        type = json['route_type'] ?? RouteType.walking,
         visits = List.generate(
           (json['visits'] as List<dynamic>).length,
           (index) => Visit.fromJson(json['visits'][index]),
@@ -32,6 +41,7 @@ class Route {
   Route.copyWithVisits(Route route, List<Visit> newVisits)
       : id = route.id,
         places = route.places,
+        type = route.type,
         visits = newVisits;
 
   bool isVisited(Place place) =>

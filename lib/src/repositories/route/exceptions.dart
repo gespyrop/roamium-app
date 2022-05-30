@@ -8,3 +8,6 @@ class VisitException implements Exception {}
 
 /// Thrown when the route fails to be marked as completed.
 class RouteCompletionException implements Exception {}
+
+/// Thrown when an empty route gets completed.
+class EmptyRouteException implements Exception {}

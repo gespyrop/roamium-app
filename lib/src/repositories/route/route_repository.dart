@@ -7,7 +7,7 @@ part 'exceptions.dart';
 
 abstract class RouteRepository {
   /// Creates a new route.
-  Future<Route> createRoute(List<Place> places);
+  Future<Route> createRoute(List<Place> places, {RouteType routeType});
 
   /// Creates a visit for the given place.
   Future<Visit> visitPlace(Route route, Place place);
@@ -25,14 +25,15 @@ class DioRouteRepository implements RouteRepository {
   DioRouteRepository(this.client);
 
   @override
-  Future<Route> createRoute(List<Place> places) async {
+  Future<Route> createRoute(List<Place> places,
+      {RouteType routeType = RouteType.walking}) async {
     String endpoint = '/route/routes/';
 
     try {
-      Response response = await client.post(endpoint);
+      Response response = await client.post(endpoint); // TODO Post route type
       int id = response.data['id'];
 
-      return Route(id, places: places);
+      return Route(id, places: places, type: routeType);
     } on DioError {
       throw RouteCreationException();
     }
@@ -62,6 +63,9 @@ class DioRouteRepository implements RouteRepository {
 
     try {
       Response response = await client.post(endpoint);
+
+      // Empty routes get deleted
+      if (response.statusCode == 204) throw EmptyRouteException();
 
       return Route.fromJson(response.data);
     } on DioError {

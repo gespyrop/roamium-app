@@ -27,8 +27,9 @@ class ReorderPlace extends RouteEvent {
 
 class StartRoute extends RouteEvent {
   final List<Place> places;
+  final RouteType routeType;
 
-  const StartRoute(this.places);
+  const StartRoute(this.places, {this.routeType = RouteType.walking});
 }
 
 class FinishRoute extends RouteEvent {

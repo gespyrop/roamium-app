@@ -51,7 +51,10 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
       emit(RouteLoading());
 
       try {
-        Route route = await routeRepository.createRoute(event.places);
+        Route route = await routeRepository.createRoute(
+          event.places,
+          routeType: event.routeType,
+        );
 
         emit(RouteActive(route: route));
       } on RouteCreationException catch (e) {
@@ -72,6 +75,8 @@ class RouteBloc extends Bloc<RouteEvent, RouteState> {
         emit(RouteFailure(e));
         Future.delayed(const Duration(milliseconds: 100));
         emit(oldState);
+      } on EmptyRouteException {
+        emit(RouteFinished(route: event.route));
       }
     });
 

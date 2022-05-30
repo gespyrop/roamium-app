@@ -2,11 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:roamium_app/src/blocs/route/route_bloc.dart';
 import 'package:roamium_app/src/models/place.dart';
+import 'package:roamium_app/src/models/route.dart';
 import 'package:roamium_app/src/screens/map/widgets/route/route_tile.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:roamium_app/src/screens/map/widgets/route/route_type_selector.dart';
 
-class RouteList extends StatelessWidget {
+class RouteList extends StatefulWidget {
   const RouteList({Key? key}) : super(key: key);
+
+  @override
+  State<RouteList> createState() => _RouteListState();
+}
+
+class _RouteListState extends State<RouteList> {
+  RouteType routeType = RouteType.walking;
 
   Widget _buildListHeader(BuildContext context) {
     return ListTile(
@@ -53,23 +62,42 @@ class RouteList extends StatelessWidget {
                   ),
                 ),
                 if (state.places.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                        child: Text(
-                          AppLocalizations.of(context).startRoute,
-                          style: const TextStyle(fontSize: 18.0),
+                  Card(
+                    margin: EdgeInsets.zero,
+                    elevation: 8,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        RouteTypeSelector(
+                          onChanged: (rt) {
+                            if (rt != null) {
+                              setState(() => routeType = rt);
+                            }
+                          },
                         ),
-                        onPressed: () {
-                          // Start the route
-                          context
-                              .read<RouteBloc>()
-                              .add(StartRoute(state.places));
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context).startRoute,
+                                style: const TextStyle(fontSize: 18.0),
+                              ),
+                              onPressed: () {
+                                // Start the route
+                                context.read<RouteBloc>().add(
+                                      StartRoute(
+                                        state.places,
+                                        routeType: routeType,
+                                      ),
+                                    );
 
-                          // Close the drawer
-                          Navigator.of(context).pop();
-                        }),
-                  )
+                                // Close the drawer
+                                Navigator.of(context).pop();
+                              }),
+                        ),
+                      ],
+                    ),
+                  ),
               ]
 
               // The route is active

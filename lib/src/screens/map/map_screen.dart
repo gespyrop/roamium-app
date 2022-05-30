@@ -267,10 +267,12 @@ class _MapScreenState extends State<MapScreen> {
                 _clearMapElements();
                 _addMarkers(state.route.places, alpha: 1);
 
-                Directions directions = await context
-                    .read<DirectionsRepository>()
-                    .getDirections(
-                        location: location!, route: state.route.places);
+                Directions directions =
+                    await context.read<DirectionsRepository>().getDirections(
+                          location: location!,
+                          route: state.route.places,
+                          routeType: state.route.type,
+                        );
 
                 Polyline polyline =
                     _createPolyline(directions.polylineCoordinates);
@@ -282,7 +284,11 @@ class _MapScreenState extends State<MapScreen> {
               }
             } else if (state is RouteFinished) {
               _clearMapElements();
-              _launchRouteDetailsScreen(state.route);
+
+              if (state.route.visits.isNotEmpty) {
+                _launchRouteDetailsScreen(state.route);
+              }
+
               context.read<RouteBloc>().add(ResetRoute());
               context.read<FeatureBloc>().add(ResetFeatures());
             } else if (state is RouteFailure) {

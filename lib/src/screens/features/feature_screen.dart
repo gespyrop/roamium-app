@@ -29,7 +29,6 @@ class _FeatureScreenState extends State<FeatureScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   void _submitFeatures() {
-    print("CATEGORIES $selectedCategories");
     context.read<FeatureBloc>().add(
           SubmitFeatures(
             widget.longitude,
