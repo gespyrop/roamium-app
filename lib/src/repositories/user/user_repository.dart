@@ -19,6 +19,8 @@ abstract class UserRepository {
 
   /// Uses a stored token to login when the app starts.
   Future<User?> loginFromStoredToken();
+
+  /// Logs the user out.
   Future<void> logout();
 }
 

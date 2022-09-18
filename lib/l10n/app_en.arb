@@ -63,6 +63,7 @@
     "visitError": "Failed to visit the current place! Please try again",
     "routeCompletionError": "Failed to complete the route! Please try again",
     "getRoutesError": "Failed to fetch routes! Please try again.",
+    "rateLimitError": "Rate limit exceeded! Please try again later.",
 
     "routeDetails": "Route details",
     "routes": "Routes",

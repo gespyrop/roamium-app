@@ -251,7 +251,9 @@ class _MapScreenState extends State<MapScreen> {
             _clearMapElements();
             _addMarkers(state.places);
           } else if (state is RecommendationsFailed) {
-            _showErrorSnackBar(state.message);
+            _showErrorSnackBar(state.message == 'rate_limit_exceeded'
+                ? AppLocalizations.of(context).rateLimitError
+                : state.message);
           }
         },
         child: BlocListener<RouteBloc, RouteState>(

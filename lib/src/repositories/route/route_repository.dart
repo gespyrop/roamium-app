@@ -30,7 +30,7 @@ class DioRouteRepository implements RouteRepository {
     String endpoint = '/route/routes/';
 
     try {
-      Response response = await client.post(endpoint); // TODO Post route type
+      Response response = await client.post(endpoint);
       int id = response.data['id'];
 
       return Route(id, places: places, type: routeType);

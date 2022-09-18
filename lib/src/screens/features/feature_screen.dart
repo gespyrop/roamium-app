@@ -78,13 +78,14 @@ class _FeatureScreenState extends State<FeatureScreen> {
                           ),
                           const SizedBox(height: 24.0),
                           ListTile(
-                              title:
-                                  Text(AppLocalizations.of(context).wheelchair),
-                              trailing: Switch(
-                                value: wheelchair,
-                                onChanged: (value) =>
-                                    setState(() => wheelchair = value),
-                              )),
+                            title:
+                                Text(AppLocalizations.of(context).wheelchair),
+                            trailing: Switch(
+                              value: wheelchair,
+                              onChanged: (value) =>
+                                  setState(() => wheelchair = value),
+                            ),
+                          ),
                           const Divider(),
                         ],
                       ),

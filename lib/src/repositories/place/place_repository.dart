@@ -3,11 +3,13 @@ import 'package:roamium_app/src/models/category.dart';
 import 'package:roamium_app/src/models/place.dart';
 
 abstract class PlaceRepository {
+  /// Get the categories of the places near the given location.
   Future<List<Category>> getNearbyCategories({
     required double longitude,
     required double latitude,
   });
 
+  /// Get recommendations for places near the given location.
   Future<List<Place>> recommendPlaces({
     required double longitude,
     required double latitude,

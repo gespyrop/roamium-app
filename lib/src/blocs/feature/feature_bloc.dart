@@ -24,12 +24,15 @@ class FeatureBloc extends Bloc<FeatureEvent, FeatureState> {
 
         emit(RecommendationsLoaded(places));
       } on DioError catch (e) {
-        emit(RecommendationsFailed(e.message));
+        if (e.response != null && e.response!.statusCode == 400) {
+          emit(const RecommendationsFailed('rate_limit_exceeded'));
+        } else {
+          emit(RecommendationsFailed(e.message));
+        }
       }
     });
 
     on<SkipFeatures>(((event, emit) {
-      // TODO Fetch nearby places
       emit(FeatureInitial());
     }));
 
